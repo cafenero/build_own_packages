@@ -7,7 +7,7 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 EMACS_VERSION=$1
-DEB_ARCH=$2
+RPM_ARCH=$2
 
 # Cleanup
 WORK_DIR=work-dir
@@ -27,13 +27,13 @@ git co emacs-28.2
 
 # Prepare files
 BUILDDIR=$(pwd)/buildroot
-mkdir -p $BUILDDIR/SOURCES
-cp emacs/lib-src/ctags $BUILDDIR/SOURCES/
-cp emacs/lib-src/ebrowse $BUILDDIR/SOURCES/
-cp emacs/lib-src/emacsclient $BUILDDIR/SOURCES/
-cp emacs/lib-src/etags $BUILDDIR/SOURCES/
-cp emacs/src//emacs $BUILDDIR/SOURCES/
-cp -r emacs/doc/man/* $BUILDDIR/SOURCES/
+mkdir -p "$BUILDDIR"/SOURCES
+cp emacs/lib-src/ctags "$BUILDDIR"/SOURCES/
+cp emacs/lib-src/ebrowse "$BUILDDIR"/SOURCES/
+cp emacs/lib-src/emacsclient "$BUILDDIR"/SOURCES/
+cp emacs/lib-src/etags "$BUILDDIR"/SOURCES/
+cp emacs/src//emacs "$BUILDDIR"/SOURCES/
+cp -r emacs/doc/man/* "$BUILDDIR"/SOURCES/
 
 # Set params
 VERSION=$EMACS_VERSION.$(date "+%Y.%m.%d.%H.%M")
@@ -90,4 +90,4 @@ EOS
 
 # Build deb package
 rpmbuild --define "_topdir ${BUILDDIR}" -bb ./$SPEC
-cp $BUILDDIR/RPMS/x86_64/*.rpm .
+cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
