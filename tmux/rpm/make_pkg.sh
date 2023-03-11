@@ -7,7 +7,7 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 TMUX_VERSION=$1
-DEB_ARCH=$2
+RPM_ARCH=$2
 
 # Cleanup
 WORK_DIR=work-dir
@@ -29,9 +29,9 @@ cd ..
 
 # Prepare files
 BUILDDIR=$(pwd)/buildroot
-mkdir -p $BUILDDIR/SOURCES
-cp tmux/tmux   $BUILDDIR/SOURCES/
-cp tmux/tmux.1 $BUILDDIR/SOURCES/
+mkdir -p "$BUILDDIR"/SOURCES
+cp tmux/tmux   "$BUILDDIR"/SOURCES/
+cp tmux/tmux.1 "$BUILDDIR"/SOURCES/
 
 # Set params
 VERSION=$TMUX_VERSION.$(date "+%Y.%m.%d.%H.%M")
@@ -64,4 +64,4 @@ EOS
 
 # Build deb package
 rpmbuild --define "_topdir ${BUILDDIR}" -bb ./$SPEC
-cp $BUILDDIR/RPMS/x86_64/*.rpm .
+cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
