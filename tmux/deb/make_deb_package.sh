@@ -10,12 +10,14 @@ TMUX_VERSION=$1
 DEB_ARCH=$2
 
 # Cleanup
-if [[ -d tmux ]]; then
-    rm -rf tmux
+WORK_DIR=work-dir
+if [[ -d $WORK_DIR ]]; then
+    rm -rf $WORK_DIR
 fi
-if [[ -d tmux-work-dir ]]; then
-    rm -rf tmux-work-dir
-fi
+mkdir work-dir
+cd $WORK_DIR
+
+sudo apt install -y build-essential
 
 # Build tmux
 sudo apt install -y libevent-dev libncurses-dev
@@ -28,16 +30,18 @@ make
 cd ..
 
 # Prepare files
-mkdir -p tmux-work-dir/DEBIAN
-mkdir -p tmux-work-dir/usr/local/bin/
-mkdir -p tmux-work-dir/usr/local/share/man/
+PKG_WORK_DIR=pkg-work-dir
+mkdir -p       $PKG_WORK_DIR/DEBIAN
+mkdir -p       $PKG_WORK_DIR/usr/local/bin/
+mkdir -p       $PKG_WORK_DIR/usr/local/share/man/
+cp tmux/tmux   $PKG_WORK_DIR/usr/local/bin/
+cp tmux/tmux.1 $PKG_WORK_DIR/usr/local/share/man/
+md5sum         $PKG_WORK_DIR/usr/local/bin/tmux > $PKG_WORK_DIR/DEBIAN/md5sums
 
-cp tmux/tmux   tmux-work-dir/usr/local/bin/
-cp tmux/tmux.1 tmux-work-dir/usr/local/share/man/
-md5sum tmux-work-dir/usr/local/bin/tmux > tmux-work-dir/DEBIAN/md5sums
-ISIZE=$(du -ks tmux-work-dir/usr | awk '{print $1}')
+# Set params
+ISIZE=$(du -ks $PKG_WORK_DIR/usr | awk '{print $1}')
 VERSION=$TMUX_VERSION-$(date "+%Y-%m-%d-%H-%M")
-cat << EOS > tmux-work-dir/DEBIAN/control
+cat << EOS > $PKG_WORK_DIR/DEBIAN/control
 Package: tmux
 Version: $VERSION
 Architecture: $DEB_ARCH
@@ -50,4 +54,4 @@ Description: tmux $TMUX_VERSION for my own build
 EOS
 
 # Build deb package
-fakeroot dpkg-deb --build tmux-work-dir .
+fakeroot dpkg-deb --build $PKG_WORK_DIR .
