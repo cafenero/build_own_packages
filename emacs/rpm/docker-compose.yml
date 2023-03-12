@@ -1,15 +1,14 @@
 version: '3'
 services:
   emacs-rpm:
-    build: ./
-    # privileged: true
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        - EMACS_VERSION
+        - ARCH
     image: emacs-rpm
     container_name: emacs-rpm
-    # restart: unless-stopped
     volumes:
       - ./make_pkg.sh:/root/make_pkg.sh
-    # expose:
-    #   - "3000"
-    # ports:
-    #   - "0.0.0.0:3000:3000"
     tty: true
