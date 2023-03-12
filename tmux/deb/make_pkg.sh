@@ -17,10 +17,12 @@ fi
 mkdir work-dir
 cd $WORK_DIR
 
-sudo apt install -y build-essential
-
 # Build tmux
-sudo apt install -y libevent-dev libncurses-dev
+if [ "$EUID" -eq 0 ]; then
+         apt install -y build-essential libevent-dev libncurses-dev
+else
+    sudo apt install -y build-essential libevent-dev libncurses-dev
+fi
 git clone https://github.com/tmux/tmux.git
 cd tmux
 git checkout "${TMUX_VERSION}"

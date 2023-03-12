@@ -18,7 +18,11 @@ mkdir work-dir
 cd $WORK_DIR
 
 # Build emacs
-sudo apt install -y automake ncurses-dev texinfo gnutls-dev
+if [ "$EUID" -eq 0 ]; then
+         apt install -y automake ncurses-dev texinfo gnutls-dev
+else
+    sudo apt install -y automake ncurses-dev texinfo gnutls-dev
+fi
 git clone https://github.com/emacs-mirror/emacs.git
 cd emacs
 git co emacs-"$EMACS_VERSION"

@@ -18,7 +18,11 @@ mkdir work-dir
 cd $WORK_DIR
 
 # Build tmux
-yum install -y git make rpm-build automake gcc byacc libevent-devel libevent ncurses-devel ncurses
+if [ "$EUID" -eq 0 ]; then
+         yum install -y git make rpm-build automake gcc byacc libevent-devel libevent ncurses-devel ncurses
+else
+    sudo yum install -y git make rpm-build automake gcc byacc libevent-devel libevent ncurses-devel ncurses
+fi
 git clone https://github.com/tmux/tmux.git
 cd tmux
 git checkout "${TMUX_VERSION}"
@@ -66,7 +70,7 @@ EOS
 rpmbuild --define "_topdir ${BUILDDIR}" -bb ./$SPEC
 
 
-if [[ $RPM_ARCH -eq "arm64" ]]; then
+if [[ $RPM_ARCH == "arm64" ]]; then
     cp "$BUILDDIR"/RPMS/aarch64/*.rpm .
 else
     cp "$BUILDDIR"/RPMS/x86_64/*.rpm .

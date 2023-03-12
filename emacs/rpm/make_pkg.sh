@@ -18,7 +18,11 @@ mkdir work-dir
 cd $WORK_DIR
 
 # Build emacs
-yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel
+if [ "$EUID" -eq 0 ]; then
+         yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel
+else
+    sudo yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel
+fi
 git clone https://github.com/emacs-mirror/emacs.git
 cd emacs
 git checkout emacs-"$EMACS_VERSION"
@@ -29,7 +33,7 @@ cd ..
 
 # Prepare files
 BUILDDIR=$(pwd)/buildroot
-rm -rf $BUILDDIR
+rm -rf "$BUILDDIR"
 mkdir -p                     "$BUILDDIR"/SOURCES/
 cp emacs/lib-src/ctags       "$BUILDDIR"/SOURCES/
 cp emacs/lib-src/ebrowse     "$BUILDDIR"/SOURCES/
@@ -85,12 +89,12 @@ else
 fi
 
 # 仮想インストール先にlisp用のディレクトリを先に作っておく。
-for f in $(find $BUILDDIR/SOURCES/lisp -type d | sed -e s/.*SOURCES// | xargs); do
+for f in $(find "$BUILDDIR"/SOURCES/lisp -type d | sed -e s/.*SOURCES// | xargs); do
     mkdir -p %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/\$f
 done
 
 # 仮想インストール先にlispファイルをinstallする。
-for f in $(find $BUILDDIR/SOURCES/lisp -type f | sed -e s/.*SOURCES// | xargs); do
+for f in $(find "$BUILDDIR"/SOURCES/lisp -type f | sed -e s/.*SOURCES// | xargs); do
     install -p -m 755 $BUILDDIR/SOURCES/\$f %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/\$f
 done
 
@@ -114,7 +118,7 @@ EOS
 # Build deb package
 rpmbuild --define "_topdir ${BUILDDIR}" -bb ./$SPEC
 
-if [[ $RPM_ARCH -eq "arm64" ]]; then
+if [[ $RPM_ARCH == "arm64" ]]; then
     cp "$BUILDDIR"/RPMS/aarch64/*.rpm ./emacs.rpm
 else
     cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
