@@ -29,21 +29,29 @@ cd ..
 
 # Prepare files
 PKG_WORK_DIR=pkg-work-dir
+rm -rf $PKG_WORK_DIR
 mkdir -p                     $PKG_WORK_DIR/DEBIAN
 mkdir -p                     $PKG_WORK_DIR/usr/local/bin/
 mkdir -p                     $PKG_WORK_DIR/usr/local/share/man/
-mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu
 mkdir -p                     $PKG_WORK_DIR/usr/local/share/emacs/"$EMACS_VERSION"/lisp
 cp emacs/lib-src/ctags       $PKG_WORK_DIR/usr/local/bin/
 cp emacs/lib-src/ebrowse     $PKG_WORK_DIR/usr/local/bin/
 cp emacs/lib-src/emacsclient $PKG_WORK_DIR/usr/local/bin/
 cp emacs/lib-src/etags       $PKG_WORK_DIR/usr/local/bin/
 cp emacs/src/emacs           $PKG_WORK_DIR/usr/local/bin/
-cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
-cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
-cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
 cp -r emacs/lisp             $PKG_WORK_DIR/usr/local/share/emacs/"$EMACS_VERSION"/
 cp -r emacs/doc/man/*        $PKG_WORK_DIR/usr/local/share/man/
+if [[ $DEB_ARCH == "arm64" ]]; then
+    mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
+    cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
+    cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
+    cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
+else
+    mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86-unknown-linux-gnu/
+    cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86-unknown-linux-gnu/
+    cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86-unknown-linux-gnu/
+    cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86-unknown-linux-gnu/
+fi
 md5sum                       $PKG_WORK_DIR/usr/local/bin/emacs > $PKG_WORK_DIR/DEBIAN/md5sums
 
 # Set params
