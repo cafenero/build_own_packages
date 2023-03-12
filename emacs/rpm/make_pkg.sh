@@ -18,7 +18,7 @@ mkdir work-dir
 cd $WORK_DIR
 
 # Build emacs
-sudo yum install -y gcc automake ncurses-devel texinfo gnutls-devel
+yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel
 git clone https://github.com/emacs-mirror/emacs.git
 cd emacs
 git checkout emacs-"$EMACS_VERSION"
@@ -29,18 +29,19 @@ cd ..
 
 # Prepare files
 BUILDDIR=$(pwd)/buildroot
-mkdir -p "$BUILDDIR"/SOURCES
-cp emacs/lib-src/ctags "$BUILDDIR"/SOURCES/
-cp emacs/lib-src/ebrowse "$BUILDDIR"/SOURCES/
+rm -rf $BUILDDIR
+mkdir -p                     "$BUILDDIR"/SOURCES/
+cp emacs/lib-src/ctags       "$BUILDDIR"/SOURCES/
+cp emacs/lib-src/ebrowse     "$BUILDDIR"/SOURCES/
 cp emacs/lib-src/emacsclient "$BUILDDIR"/SOURCES/
-cp emacs/lib-src/etags "$BUILDDIR"/SOURCES/
-cp emacs/src//emacs "$BUILDDIR"/SOURCES/
-cp -r emacs/doc/man/* "$BUILDDIR"/SOURCES/
+cp emacs/lib-src/etags       "$BUILDDIR"/SOURCES/
+cp emacs/src/emacs           "$BUILDDIR"/SOURCES/
+cp -r emacs/lisp             "$BUILDDIR"/SOURCES/
+cp -r emacs/doc/man/*        "$BUILDDIR"/SOURCES/
 
 # Set params
 VERSION=$EMACS_VERSION.$(date "+%Y.%m.%d.%H.%M")
 SPEC=emacs.spec
-echo "hoge"
 cat << EOS > ./$SPEC
 Name:    emacs
 Version: ${EMACS_VERSION}
@@ -76,6 +77,23 @@ install -p -m 755 %{SOURCE7} %{buildroot}/usr/local/share/man/man1
 install -p -m 755 %{SOURCE8} %{buildroot}/usr/local/share/man/man1
 install -p -m 755 %{SOURCE9} %{buildroot}/usr/local/share/man/man1
 
+
+if [[ $RPM_ARCH == "arm64" ]]; then
+  mkdir -p %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/aarch64-unknown-linux-gnu/
+else
+  mkdir -p %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/x86-unknown-linux-gnu/
+fi
+
+# 仮想インストール先にlisp用のディレクトリを先に作っておく。
+for f in $(find $BUILDDIR/SOURCES/lisp -type d | sed -e s/.*SOURCES// | xargs); do
+    mkdir -p %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/\$f
+done
+
+# 仮想インストール先にlispファイルをinstallする。
+for f in $(find $BUILDDIR/SOURCES/lisp -type f | sed -e s/.*SOURCES// | xargs); do
+    install -p -m 755 $BUILDDIR/SOURCES/\$f %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/\$f
+done
+
 %files
 /usr/local/bin/ctags
 /usr/local/bin/ebrowse
@@ -87,9 +105,17 @@ install -p -m 755 %{SOURCE9} %{buildroot}/usr/local/share/man/man1
 /usr/local/share/man/man1/emacs.1
 /usr/local/share/man/man1/emacsclient.1
 /usr/local/share/man/man1/etags.1
+/usr/local/libexec/emacs/*
+# lispファイルはたくさんある！
+/usr/local/share/emacs/*
 
 EOS
 
 # Build deb package
 rpmbuild --define "_topdir ${BUILDDIR}" -bb ./$SPEC
-cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
+
+if [[ $RPM_ARCH -eq "arm64" ]]; then
+    cp "$BUILDDIR"/RPMS/aarch64/*.rpm ./emacs.rpm
+else
+    cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
+fi
