@@ -18,7 +18,7 @@ mkdir work-dir
 cd $WORK_DIR
 
 # Build tmux
-sudo yum install -y rpm-build automake gcc byacc libevent-devel libevent ncurses-devel ncurses
+yum install -y git make rpm-build automake gcc byacc libevent-devel libevent ncurses-devel ncurses
 git clone https://github.com/tmux/tmux.git
 cd tmux
 git checkout "${TMUX_VERSION}"
@@ -64,4 +64,12 @@ EOS
 
 # Build deb package
 rpmbuild --define "_topdir ${BUILDDIR}" -bb ./$SPEC
-cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
+
+
+if [[ $RPM_ARCH -eq "arm64" ]]; then
+    cp "$BUILDDIR"/RPMS/aarch64/*.rpm .
+else
+    cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
+fi
+
+# cp "$BUILDDIR"/RPMS/x86_64/*.rpm .
