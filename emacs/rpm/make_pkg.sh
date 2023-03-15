@@ -19,13 +19,15 @@ cd $WORK_DIR
 
 # Build emacs
 if [ "$EUID" -eq 0 ]; then
-         yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel
+         yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel wget
 else
-    sudo yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel
+    sudo yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel wget
 fi
-git clone https://github.com/emacs-mirror/emacs.git
+
+wget http://ftp.jaist.ac.jp/pub/GNU/emacs/emacs-"$EMACS_VERSION".tar.gz
+tar xf emacs-"$EMACS_VERSION".tar.gz
+mv emacs-"$EMACS_VERSION" emacs
 cd emacs
-git checkout emacs-"$EMACS_VERSION"
 ./autogen.sh
 ./configure --without-x
 make
@@ -43,6 +45,7 @@ cp emacs/src/emacs           "$BUILDDIR"/SOURCES/
 cp -r emacs/lisp             "$BUILDDIR"/SOURCES/
 cp -r emacs/doc/man/*        "$BUILDDIR"/SOURCES/
 cp -r emacs/etc/             "$BUILDDIR"/SOURCES/
+cp -r emacs/info             "$BUILDDIR"/SOURCES/
 
 # Set params
 VERSION=$EMACS_VERSION.$(date "+%Y.%m.%d.%H.%M")
@@ -71,6 +74,7 @@ emacs ${EMACS_VERSION} for my own build
 %install
 mkdir -p %{buildroot}/usr/local/bin
 mkdir -p %{buildroot}/usr/local/share/man/man1
+mkdir -p %{buildroot}/usr/local/share/emacs/info
 mkdir -p %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/etc/charsets
 install -p -m 755 %{SOURCE0} %{buildroot}/usr/local/bin
 install -p -m 755 %{SOURCE1} %{buildroot}/usr/local/bin
@@ -101,10 +105,14 @@ for f in $(find "$BUILDDIR"/SOURCES/lisp -type f | sed -e s/.*SOURCES\\/// | xar
 done
 
 # charsets el
-for f in $(find "$BUILDDIR"/SOURCES/etc/charsets/ -type f -printf '%f\n' | xargs); do
-    echo install -p -m 755 "$BUILDDIR/SOURCES/etc/charsets/$f %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/etc/charsets/$f"  >> ./$SPEC
+for f in $(find "$BUILDDIR"/SOURCES/etc/charsets/ -type f | sed -e s/.*SOURCES\\/// | xargs); do
+    echo install -p -m 755 "$BUILDDIR/SOURCES/$f %{buildroot}/usr/local/share/emacs/${EMACS_VERSION}/$f"  >> ./$SPEC
 done
 
+# info
+for f in $(find "$BUILDDIR"/SOURCES/info/ -type f | sed -e s/.*SOURCES\\/// | xargs); do
+    echo install -p -m 755 "$BUILDDIR/SOURCES/$f %{buildroot}/usr/local/share/emacs/$f"  >> ./$SPEC
+done
 
 cat << EOS >> ./$SPEC
 %files
