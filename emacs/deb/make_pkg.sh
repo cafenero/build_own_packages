@@ -55,10 +55,10 @@ if [[ $DEB_ARCH == "arm64" ]]; then
     cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
     cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
 else
-    mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
-    cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
-    cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
-    cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
+    mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
 fi
 md5sum                       $PKG_WORK_DIR/usr/local/bin/emacs > $PKG_WORK_DIR/DEBIAN/md5sums
 
