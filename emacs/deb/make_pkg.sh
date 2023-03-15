@@ -31,7 +31,7 @@ mv emacs-"$EMACS_VERSION" emacs
 cd emacs
 ./autogen.sh
 ./configure --without-x
-make
+make -j
 cd ..
 
 # Prepare files
@@ -46,19 +46,23 @@ cp emacs/lib-src/ebrowse     $PKG_WORK_DIR/usr/local/bin/
 cp emacs/lib-src/emacsclient $PKG_WORK_DIR/usr/local/bin/
 cp emacs/lib-src/etags       $PKG_WORK_DIR/usr/local/bin/
 cp emacs/src/emacs           $PKG_WORK_DIR/usr/local/bin/
-cp -r emacs/lisp             $PKG_WORK_DIR/usr/local/share/emacs/"$EMACS_VERSION"/
+cp -r emacs/info             $PKG_WORK_DIR/usr/local/share/
 cp -r emacs/doc/man/*        $PKG_WORK_DIR/usr/local/share/man/
-cp -r emacs/etc/charsets     $PKG_WORK_DIR/usr/local/share/emacs/"$EMACS_VERSION"/
+cp -r emacs/lisp             $PKG_WORK_DIR/usr/local/share/emacs/"$EMACS_VERSION"/
+cp -r emacs/etc              $PKG_WORK_DIR/usr/local/share/emacs/"$EMACS_VERSION"/
+
 if [[ $DEB_ARCH == "arm64" ]]; then
     mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
     cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
     cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
     cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
+    cp emacs/src/emacs.pdmp      $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/aarch64-unknown-linux-gnu/
 else
-    mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
-    cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
-    cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
-    cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-linux-gnu/
+    mkdir -p                     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/lib-src/rcs2log     $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/lib-src/hexl        $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/lib-src/movemail    $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
+    cp emacs/src/emacs.pdmp      $PKG_WORK_DIR/usr/local/libexec/emacs/"$EMACS_VERSION"/x86_64-pc-linux-gnu/
 fi
 md5sum                       $PKG_WORK_DIR/usr/local/bin/emacs > $PKG_WORK_DIR/DEBIAN/md5sums
 

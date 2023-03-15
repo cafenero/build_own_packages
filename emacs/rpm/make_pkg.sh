@@ -30,7 +30,7 @@ mv emacs-"$EMACS_VERSION" emacs
 cd emacs
 ./autogen.sh
 ./configure --without-x
-make
+make -j
 cd ..
 
 # Prepare files
@@ -42,6 +42,7 @@ cp emacs/lib-src/ebrowse     "$BUILDDIR"/SOURCES/
 cp emacs/lib-src/emacsclient "$BUILDDIR"/SOURCES/
 cp emacs/lib-src/etags       "$BUILDDIR"/SOURCES/
 cp emacs/src/emacs           "$BUILDDIR"/SOURCES/
+cp -r emacs/src              "$BUILDDIR"/SOURCES/
 cp -r emacs/lisp             "$BUILDDIR"/SOURCES/
 cp -r emacs/doc/man/*        "$BUILDDIR"/SOURCES/
 cp -r emacs/etc/             "$BUILDDIR"/SOURCES/
@@ -86,13 +87,15 @@ install -p -m 755 %{SOURCE6} %{buildroot}/usr/local/share/man/man1
 install -p -m 755 %{SOURCE7} %{buildroot}/usr/local/share/man/man1
 install -p -m 755 %{SOURCE8} %{buildroot}/usr/local/share/man/man1
 install -p -m 755 %{SOURCE9} %{buildroot}/usr/local/share/man/man1
+EOS
 
 if [[ $RPM_ARCH == "arm64" ]]; then
-  mkdir -p %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/aarch64-unknown-linux-gnu/
+  echo mkdir -p %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/aarch64-unknown-linux-gnu/ >> ./$SPEC
+  echo install -p -m 755 "$BUILDDIR/SOURCES/src/emacs.pdmp %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/aarch64-unknown-linux-gnu/emacs.pdmp" >> ./$SPEC
 else
-  mkdir -p %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/x86_64-pc-linux-gnu/
+  echo mkdir -p %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/x86_64-pc-linux-gnu/ >> ./$SPEC
+  echo install -p -m 755 "$BUILDDIR/SOURCES/src/emacs.pdmp %{buildroot}/usr/local/libexec/emacs/${EMACS_VERSION}/x86_64-pc-linux-gnu/emacs.pdmp" >> ./$SPEC
 fi
-EOS
 
 # 仮想インストール先にlisp用のディレクトリを先に作っておく。
 for f in $(find "$BUILDDIR"/SOURCES/lisp -type d | sed -e s/.*SOURCES\\/// | xargs); do
@@ -126,6 +129,7 @@ cat << EOS >> ./$SPEC
 /usr/local/share/man/man1/emacs.1
 /usr/local/share/man/man1/emacsclient.1
 /usr/local/share/man/man1/etags.1
+/usr/local/libexec/*
 /usr/local/libexec/emacs/*
 /usr/local/share/emacs/*
 EOS
