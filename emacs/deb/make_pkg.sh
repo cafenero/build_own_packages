@@ -31,7 +31,7 @@ mv emacs-"$EMACS_VERSION" emacs
 cd emacs
 ./autogen.sh
 ./configure --without-x
-make
+make -j
 cd ..
 
 # Prepare files
