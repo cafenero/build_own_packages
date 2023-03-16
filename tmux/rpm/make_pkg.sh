@@ -38,12 +38,12 @@ cp tmux/tmux   "$BUILDDIR"/SOURCES/
 cp tmux/tmux.1 "$BUILDDIR"/SOURCES/
 
 # Set params
-VERSION=$TMUX_VERSION.$(date "+%Y.%m.%d.%H.%M")
+RELEASE=$(date "+%Y.%m.%d.%H.%M")
 SPEC=tmux.spec
 cat << EOS > ./$SPEC
 Name:    tmux
 Version: ${TMUX_VERSION}
-Release: ${VERSION}%{?dist}
+Release: ${RELEASE}%{?dist}
 Summary: tmux ${TMUX_VERSION} for my own build
 
 License: ISC license
