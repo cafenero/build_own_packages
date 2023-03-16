@@ -49,12 +49,12 @@ cp -r emacs/etc/             "$BUILDDIR"/SOURCES/
 cp -r emacs/info             "$BUILDDIR"/SOURCES/
 
 # Set params
-VERSION=$EMACS_VERSION.$(date "+%Y.%m.%d.%H.%M")
+RELEASE=$(date "+%Y.%m.%d.%H.%M")
 SPEC=emacs.spec
 cat << EOS > ./$SPEC
 Name:    emacs
 Version: ${EMACS_VERSION}
-Release: ${VERSION}%{?dist}
+Release: ${RELEASE}%{?dist}
 Summary: emacs ${EMACS_VERSION} for my own build
 License: GNU
 
