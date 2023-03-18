@@ -60,5 +60,4 @@ ISC license
 EOS
 
 # Build deb package
-fakeroot dpkg-deb --build $PKG_WORK_DIR .
-cp work-dir/tmux_*.deb .
+fakeroot dpkg-deb --build $PKG_WORK_DIR ..
