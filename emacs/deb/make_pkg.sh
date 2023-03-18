@@ -86,5 +86,4 @@ GNU GPLv3
 EOS
 
 # Build deb package
-fakeroot dpkg-deb --build $PKG_WORK_DIR .
-cp work-dir/emacs_*.deb .
+fakeroot dpkg-deb --build $PKG_WORK_DIR ..
