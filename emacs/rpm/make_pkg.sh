@@ -56,7 +56,7 @@ Name:    emacs
 Version: ${EMACS_VERSION}
 Release: ${RELEASE}%{?dist}
 Summary: emacs ${EMACS_VERSION} for my own build
-License: GNU
+License: GNU GPLv3
 
 Source0: ctags
 Source1: ebrowse

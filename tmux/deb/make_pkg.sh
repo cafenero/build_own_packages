@@ -49,10 +49,14 @@ Version: $VERSION
 Architecture: $DEB_ARCH
 Maintainer: self build
 Installed-Size: $ISIZE
-Section: devel
+Section: admin
 Priority: optional
-Homepage: http://www.example.com/
+Homepage: https://github.com/cafenero/build_own_packages
 Description: tmux $TMUX_VERSION for my own build
+EOS
+
+cat << EOS >> $PKG_WORK_DIR/DEBIAN/copyright
+ISC license
 EOS
 
 # Build deb package

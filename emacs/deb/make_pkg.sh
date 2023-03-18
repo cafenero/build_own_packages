@@ -75,10 +75,14 @@ Version: $VERSION
 Architecture: $DEB_ARCH
 Maintainer: self build
 Installed-Size: $ISIZE
-Section: devel
+Section: editors
 Priority: optional
-Homepage: http://www.example.com/
+Homepage: https://github.com/cafenero/build_own_packages
 Description: emacs $EMACS_VERSION for my own build
+EOS
+
+cat << EOS >> $PKG_WORK_DIR/DEBIAN/copyright
+GNU GPLv3
 EOS
 
 # Build deb package
