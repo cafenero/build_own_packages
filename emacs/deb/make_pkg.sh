@@ -72,6 +72,7 @@ VERSION="$EMACS_VERSION"-$(date "+%Y-%m-%d-%H-%M")
 cat << EOS > $PKG_WORK_DIR/DEBIAN/control
 Package: emacs
 Version: $VERSION
+Depends: emacs-mozc
 Architecture: $DEB_ARCH
 Maintainer: self build
 Installed-Size: $ISIZE

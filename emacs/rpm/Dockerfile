@@ -1,5 +1,9 @@
 FROM centos:centos7
 
+
+# for install mozc
+RUN yum install -y epel-release
+
 ARG EMACS_VERSION
 ARG ARCH
 

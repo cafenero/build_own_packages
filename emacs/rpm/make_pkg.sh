@@ -58,6 +58,8 @@ Release: ${RELEASE}%{?dist}
 Summary: emacs ${EMACS_VERSION} for my own build
 License: GNU GPLv3
 
+Requires: mozc
+
 Source0: ctags
 Source1: ebrowse
 Source2: emacsclient
