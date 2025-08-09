@@ -24,7 +24,7 @@ else
     sudo yum install -y git rpm-build gcc automake ncurses-devel texinfo gnutls-devel wget
 fi
 
-wget http://ftp.jaist.ac.jp/pub/GNU/emacs/emacs-"$EMACS_VERSION".tar.gz
+wget https://gnu.mirror.constant.com/emacs/emacs-"$EMACS_VERSION".tar.gz
 tar xf emacs-"$EMACS_VERSION".tar.gz
 mv emacs-"$EMACS_VERSION" emacs
 cd emacs
