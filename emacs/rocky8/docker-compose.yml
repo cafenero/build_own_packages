@@ -1,0 +1,13 @@
+services:
+  emacs-rpm:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        - EMACS_VERSION
+        - ARCH
+    image: emacs-rpm
+    container_name: emacs-rpm
+    volumes:
+      - ./make_pkg.sh:/root/make_pkg.sh
+    tty: true
