@@ -1,0 +1,13 @@
+services:
+  tmux-rpm:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        - TMUX_VERSION
+        - ARCH
+    image: tmux-rpm
+    container_name: tmux-rpm
+    volumes:
+      - ./make_pkg.sh:/root/make_pkg.sh
+    tty: true
